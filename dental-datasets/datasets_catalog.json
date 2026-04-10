@@ -1,0 +1,240 @@
+{
+  "project": "Dental Insights",
+  "description": "Curated catalog of dental imaging datasets for multi-agent AI training pipeline",
+  "architecture": {
+    "agent_1": "Qwen3-VL-8B (triagem rápida + YOLO v11)",
+    "agent_2": "Qwen3-VL-30B-A3B (análise intermediária)",
+    "agent_3": "InternVL3-78B (análise profunda)",
+    "central_brain": "Llama 3.1 405B via Petals (consolidação + laudo)"
+  },
+  "categories": {
+    "panoramic_2d": {
+      "description": "Panoramic dental radiographs (2D)",
+      "estimated_total": "25000-30000 images",
+      "datasets": [
+        {
+          "name": "UFBA UESC Panoramic",
+          "source": "Universidade Federal da Bahia, Brazil",
+          "size": "1500 images",
+          "annotations": "10 classes of dental structures",
+          "access": "direct",
+          "platform": "Mendeley Data",
+          "url": "https://data.mendeley.com/datasets/hxt48yk462",
+          "format": "JPEG + XML annotations",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "Tufts Dental",
+          "source": "Tufts University School of Dental Medicine, USA",
+          "size": "1000 panoramic images",
+          "annotations": "Expert annotations for multiple conditions",
+          "access": "direct",
+          "platform": "Kaggle",
+          "url": "https://www.kaggle.com/datasets/deepologylab/tufts-dental-database",
+          "format": "PNG + annotations",
+          "license": "Research use"
+        },
+        {
+          "name": "DNS Panoramic",
+          "source": "Multiple dental clinics",
+          "size": "543 images",
+          "annotations": "Dental numbering + segmentation",
+          "access": "direct",
+          "platform": "Roboflow",
+          "url": "https://universe.roboflow.com/search?q=dental+panoramic",
+          "format": "YOLO / COCO / VOC",
+          "license": "Varies"
+        },
+        {
+          "name": "DENTEX",
+          "source": "MICCAI 2023 Challenge",
+          "size": "3900 panoramic images",
+          "annotations": "Quadrant, enumeration, diagnosis",
+          "access": "registration",
+          "platform": "Grand Challenge",
+          "url": "https://dentex.grand-challenge.org/",
+          "format": "PNG + JSON annotations",
+          "license": "Research use",
+          "registration_notes": "Requires Grand Challenge account"
+        },
+        {
+          "name": "OdontoAI",
+          "source": "Brazilian dental clinics",
+          "size": "2000+ panoramic images",
+          "annotations": "Object detection multi-class",
+          "access": "direct",
+          "platform": "Roboflow",
+          "url": "https://universe.roboflow.com/search?q=dental+odonto",
+          "format": "YOLO format",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "Cluj-Napoca Dataset",
+          "source": "Iuliu Hațieganu University, Romania",
+          "size": "1628 training + 180 validation",
+          "annotations": "Multiple dental conditions",
+          "access": "direct",
+          "platform": "Zenodo",
+          "url": "https://zenodo.org/search?q=dental+panoramic+radiograph",
+          "format": "DICOM/PNG + annotations",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "Quad-DXP",
+          "source": "PRCV 2024 Conference, China",
+          "size": "Unknown",
+          "annotations": "9 classes of dental diseases/treatments",
+          "access": "request",
+          "platform": "ACM Digital Library",
+          "url": "https://dl.acm.org/",
+          "format": "Unknown",
+          "license": "Research use",
+          "request_notes": "Contact authors via paper"
+        },
+        {
+          "name": "Dhaka 6-class",
+          "source": "3 private clinics in Dhaka, Bangladesh",
+          "size": "232 panoramic images",
+          "annotations": "6 classes (healthy, caries, impacted, infections, fractures, BDC/BDR)",
+          "access": "direct",
+          "platform": "IEEE DataPort",
+          "url": "https://ieee-dataport.org/",
+          "format": "JPEG + labels",
+          "license": "IEEE DataPort terms"
+        },
+        {
+          "name": "STS-2D-Tooth",
+          "source": "Scientific Data (Nature)",
+          "size": "4000 panoramic + 900 segmentation masks",
+          "annotations": "Segmentation (children and adults)",
+          "access": "direct",
+          "platform": "Scientific Data",
+          "url": "https://www.nature.com/articles/s41597-024-dental",
+          "format": "PNG + masks",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "Mendeley Panoramic",
+          "source": "Tunisian university",
+          "size": "221 images",
+          "annotations": "Instance segmentation",
+          "access": "direct",
+          "platform": "Mendeley Data",
+          "url": "https://data.mendeley.com/",
+          "format": "JPEG + masks",
+          "license": "CC BY 4.0"
+        }
+      ]
+    },
+    "periapical_2d": {
+      "description": "Periapical dental radiographs (2D)",
+      "estimated_total": "~11000 images",
+      "datasets": [
+        {
+          "name": "DenPAR",
+          "source": "Nature Scientific Data",
+          "size": "1000 periapical radiographs",
+          "annotations": "Landmarks + dental segmentation",
+          "access": "direct",
+          "platform": "Scientific Data",
+          "url": "https://www.nature.com/sdata/",
+          "format": "PNG + landmark annotations",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "PRAD-10K",
+          "source": "MICCAI 2025",
+          "size": "10000 periapical radiographs",
+          "annotations": "Pixel-level annotations, 9 types by endodontists",
+          "access": "registration",
+          "platform": "MICCAI 2025",
+          "url": "https://miccai2025.org/",
+          "format": "PNG + pixel-level masks",
+          "license": "Research use",
+          "registration_notes": "MICCAI challenge registration required"
+        }
+      ]
+    },
+    "cbct_3d": {
+      "description": "Cone Beam CT volumes (3D)",
+      "estimated_total": "1500+ volumes (150000+ slices)",
+      "datasets": [
+        {
+          "name": "MMDental",
+          "source": "PubMed Central / Scientific Data",
+          "size": "660 patients",
+          "annotations": "Multimodal (3D image + clinical text, diagnosis, follow-up)",
+          "access": "direct",
+          "platform": "Scientific Data",
+          "url": "https://www.nature.com/sdata/",
+          "format": "DICOM + clinical records",
+          "license": "Research use"
+        },
+        {
+          "name": "STS-3D-Tooth",
+          "source": "Nature Scientific Data",
+          "size": "148400 unlabeled scans + 8800 masks",
+          "annotations": "Semi-supervised segmentation",
+          "access": "direct",
+          "platform": "Scientific Data",
+          "url": "https://www.nature.com/sdata/",
+          "format": "NIfTI/DICOM + masks",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "CTooth+",
+          "source": "arXiv benchmark",
+          "size": "22 fully annotated + 146 unlabeled volumes",
+          "annotations": "3D volumetric segmentation",
+          "access": "request",
+          "platform": "Kaggle / via email",
+          "url": "https://www.kaggle.com/",
+          "format": "NIfTI",
+          "license": "Research use",
+          "request_notes": "Contact authors via email"
+        },
+        {
+          "name": "Figshare 3D Multimodal",
+          "source": "Figshare",
+          "size": "289 CBCT + oral scan pairs (ages 19-28)",
+          "annotations": "Multimodal 3D registration",
+          "access": "direct",
+          "platform": "Figshare",
+          "url": "https://figshare.com/",
+          "format": "DICOM + STL",
+          "license": "CC BY 4.0"
+        },
+        {
+          "name": "PhysioNet Multimodal",
+          "source": "PhysioNet",
+          "size": "389 CBCTs + 12 panoramics + 29199 periapicals generated from CBCTs",
+          "annotations": "Segmentation + image translation",
+          "access": "credentialed",
+          "platform": "PhysioNet",
+          "url": "https://physionet.org/",
+          "format": "DICOM + NIfTI",
+          "license": "PhysioNet Credentialed Health Data License",
+          "registration_notes": "Requires PhysioNet credentialed access (CITI training)"
+        }
+      ]
+    },
+    "intraoral_scan": {
+      "description": "Intraoral / oral scan data",
+      "estimated_total": "~230000 samples",
+      "datasets": [
+        {
+          "name": "IOSVQA",
+          "source": "Zhejiang University",
+          "size": "229943 training + 5884 test samples",
+          "annotations": "Multi-disease diagnosis via 3D intraoral scan, 23 oral diseases",
+          "access": "request",
+          "platform": "arXiv",
+          "url": "https://arxiv.org/",
+          "format": "3D mesh + annotations",
+          "license": "Research use",
+          "request_notes": "Contact authors for access"
+        }
+      ]
+    }
+  }
+}
