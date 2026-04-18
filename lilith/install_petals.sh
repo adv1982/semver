@@ -21,8 +21,8 @@ pip install "setuptools<72" wheel pip --upgrade --quiet
 echo "=== Instalando hivemind 1.1.10 ==="
 pip install "hivemind==1.1.10.post2"
 
-echo "=== Instalando torch (CPU) ==="
-pip install torch --index-url https://download.pytorch.org/whl/cpu --quiet
+echo "=== Instalando torch 2.1.0 (CPU) ==="
+pip install "torch==2.1.0" --index-url https://download.pytorch.org/whl/cpu --quiet
 
 echo "=== Instalando dependências Petals ==="
 pip install \
