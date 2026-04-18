@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lilith — Acesso</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .card {
+    background: #12121a;
+    border: 1px solid #2a1a3e;
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(140, 50, 200, 0.15);
+  }
+  .sigil { font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 0 12px #a855f7); }
+  h1 { color: #e2c4ff; font-size: 28px; letter-spacing: 4px; margin-bottom: 6px; }
+  .sub { color: #6b5880; font-size: 13px; margin-bottom: 36px; }
+  input[type=password] {
+    width: 100%;
+    background: #1c1c2e;
+    border: 1px solid #3d2b55;
+    border-radius: 10px;
+    color: #e2c4ff;
+    font-size: 16px;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type=password]:focus { border-color: #a855f7; }
+  button {
+    width: 100%; margin-top: 16px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: white; border: none; border-radius: 10px;
+    font-size: 16px; font-weight: 600; padding: 14px;
+    cursor: pointer; transition: opacity 0.2s;
+    letter-spacing: 1px;
+  }
+  button:hover { opacity: 0.88; }
+  .error { color: #f87171; font-size: 13px; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="sigil">🜏</div>
+  <h1>LILITH</h1>
+  <p class="sub">Identificação necessária</p>
+  <form method="POST">
+    <input type="password" name="password" placeholder="••••••••••" autofocus>
+    <button type="submit">Entrar</button>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  </form>
+</div>
+</body>
+</html>

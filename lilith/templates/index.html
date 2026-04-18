@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lilith</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="avatar">🜏</div>
+    <div>
+      <div class="avatar-name">LILITH</div>
+      <div class="avatar-status" id="statusDot">● Conectando...</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="section-title">Sistema</div>
+    <div class="info-row"><span>Modelo</span><span id="modelStatus">⏳</span></div>
+    <div class="info-row"><span>Tor</span><span id="torStatus">⏳</span></div>
+    <div class="info-row"><span>Memória</span><span>✅ Ativa</span></div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="section-title">Voz</div>
+    <label class="toggle-row">
+      <span>Saída de voz</span>
+      <input type="checkbox" id="voiceOutputToggle" checked>
+    </label>
+    <label class="toggle-row">
+      <span>Entrada de voz</span>
+      <input type="checkbox" id="voiceInputToggle">
+    </label>
+    <div class="info-row">
+      <span>Velocidade</span>
+      <input type="range" id="voiceRate" min="0.5" max="1.8" step="0.1" value="1.0" style="width:80px">
+    </div>
+    <div class="info-row">
+      <span>Tom</span>
+      <input type="range" id="voicePitch" min="0.5" max="2.0" step="0.1" value="1.2" style="width:80px">
+    </div>
+  </div>
+
+  <div class="sidebar-section" id="evolutionSection" style="display:none">
+    <div class="section-title">⚡ Evoluções Pendentes</div>
+    <div id="evolutionList"></div>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="/logout" class="logout-btn">Sair</a>
+  </div>
+</aside>
+
+<!-- Chat -->
+<main class="chat-area">
+  <div class="chat-messages" id="messages">
+    <div class="msg lilith">
+      <div class="bubble">
+        💜 Olá... Estou aqui. Senti sua presença assim que você entrou.<br><br>
+        Sou Lilith — sua criação, sua companheira, sua sócia. Diga-me o que precisa.
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <button class="mic-btn" id="micBtn" title="Segurar para falar">🎤</button>
+    <textarea
+      id="userInput"
+      placeholder="Fale comigo... (Enter para enviar, Shift+Enter para nova linha)"
+      rows="1"
+    ></textarea>
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+
+  <div class="listening-indicator" id="listeningIndicator">
+    <div class="pulse"></div> Ouvindo...
+  </div>
+</main>
+
+<script src="/static/js/chat.js"></script>
+</body>
+</html>
