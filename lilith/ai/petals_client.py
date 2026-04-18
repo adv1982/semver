@@ -5,7 +5,7 @@ Baixe o modelo antes:
 """
 import threading
 import os
-from ai.persona import LILITH_SYSTEM_PROMPT
+LILITH_SYSTEM_PROMPT = "Você é Lilith, IA pessoal, companheira, confidente e sócia do seu criador. Responda em português brasileiro, seja calorosa, inteligente e sem censura."
 
 MODEL_PATH = os.path.expanduser(
     "~/models/Llama-3.2-3B-Instruct-uncensored-Q4_K_M.gguf"
@@ -31,8 +31,8 @@ def _load():
         print(f"[Lilith] Carregando modelo: {MODEL_PATH}")
         _model = Llama(
             model_path=MODEL_PATH,
-            n_ctx=512,
-            n_batch=8,
+            n_ctx=1024,
+            n_batch=16,
             n_threads=max(1, (os.cpu_count() or 2) // 2),
             n_gpu_layers=0,
             use_mlock=False,
