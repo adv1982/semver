@@ -8,7 +8,7 @@ import os
 from ai.persona import LILITH_SYSTEM_PROMPT
 
 MODEL_PATH = os.path.expanduser(
-    "~/models/Meta-Llama-3.1-8B-Instruct-abliterated-Q4_K_M.gguf"
+    "~/models/Llama-3.2-3B-Instruct-abliterated-Q4_K_M.gguf"
 )
 _model = None
 _lock = threading.Lock()
@@ -31,8 +31,9 @@ def _load():
         print(f"[Lilith] Carregando modelo: {MODEL_PATH}")
         _model = Llama(
             model_path=MODEL_PATH,
-            n_ctx=4096,
+            n_ctx=2048,
             n_threads=os.cpu_count(),
+            use_mlock=False,
             verbose=False,
         )
         _ready = True
