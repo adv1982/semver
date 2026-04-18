@@ -125,6 +125,7 @@ def handle_message(data):
         def send_token(token):
             collected.append(token)
             socketio.emit("stream_token", {"token": token}, to=sid)
+            socketio.sleep(0)  # cede controle ao eventlet para enviar o token
 
         generate_stream(history, send_token)
         full = "".join(collected)
