@@ -100,36 +100,33 @@ def handle_message(data):
     if not user_msg:
         return
 
-    from memory.store import save, build_context
-    from ai.petals_client import generate
+    from memory.store import save
+    from ai.petals_client import generate_stream
 
-    # Salvar mensagem do usuário na memória
     save("user", user_msg)
 
-    # Recuperar contexto relevante da memória
-    memory_ctx = build_context(user_msg)
-
-    # Detectar intenções especiais
     response_text = _handle_special_intents(user_msg)
 
     if response_text is None:
-        # Construir histórico com contexto de memória
-        history = []
-        if memory_ctx:
-            history.append({"role": "system", "content": memory_ctx})
-        history.extend(_chat_history[-20:])  # últimas 20 mensagens
+        history = list(_chat_history[-6:])
         history.append({"role": "user", "content": user_msg})
 
-        response_text = generate(history)
+        collected = []
+        emit("stream_start", {})
 
-    # Salvar resposta na memória
+        def send_token(token):
+            collected.append(token)
+            emit("stream_token", {"token": token})
+
+        generate_stream(history, send_token)
+        response_text = "".join(collected)
+        emit("stream_end", {"speak": True})
+    else:
+        emit("response", {"text": response_text, "speak": False})
+
     save("lilith", response_text)
-
-    # Atualizar histórico de sessão
     _chat_history.append({"role": "user", "content": user_msg})
     _chat_history.append({"role": "assistant", "content": response_text})
-
-    emit("response", {"text": response_text, "speak": True})
 
 
 def _handle_special_intents(msg: str) -> str | None:

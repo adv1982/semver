@@ -126,16 +126,44 @@ function sendMessage() {
   socket.emit("message", { text });
 }
 
+// ── Streaming ─────────────────────────────────────────────────────────────────
+let _streamBubble = null;
+let _streamText = "";
+
+socket.on("stream_start", () => {
+  hideTyping();
+  const div = document.createElement("div");
+  div.className = "msg lilith";
+  _streamBubble = document.createElement("div");
+  _streamBubble.className = "bubble";
+  _streamBubble.innerHTML = '<span class="cursor">▊</span>';
+  div.appendChild(_streamBubble);
+  messagesEl.appendChild(div);
+  _streamText = "";
+});
+
+socket.on("stream_token", (data) => {
+  _streamText += data.token;
+  if (_streamBubble) {
+    _streamBubble.innerHTML = markdownToHtml(_streamText) + '<span class="cursor">▊</span>';
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+});
+
+socket.on("stream_end", (data) => {
+  if (_streamBubble) {
+    _streamBubble.innerHTML = markdownToHtml(_streamText);
+    if (data.speak) speak(_streamText);
+    _streamBubble = null;
+  }
+  checkPendingEvolutions();
+});
+
 socket.on("response", (data) => {
   hideTyping();
-  if (data.error) {
-    appendMessage("lilith", `⚠️ ${data.error}`);
-    return;
-  }
+  if (data.error) { appendMessage("lilith", `⚠️ ${data.error}`); return; }
   appendMessage("lilith", data.text);
   if (data.speak) speak(data.text);
-
-  // Verificar evoluções pendentes após cada resposta
   checkPendingEvolutions();
 });
 
