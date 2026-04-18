@@ -26,6 +26,7 @@ pip install "torch==2.2.2+cpu" --index-url https://download.pytorch.org/whl/cpu 
 
 echo "=== Instalando dependências Petals ==="
 pip install \
+  "huggingface_hub>=0.18.0,<0.20.0" \
   "transformers>=4.32.0,<4.35.0" \
   "peft==0.5.0" \
   "pydantic<2.0,>=1.10" \
