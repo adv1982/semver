@@ -107,26 +107,33 @@ def handle_message(data):
 
     response_text = _handle_special_intents(user_msg)
 
-    if response_text is None:
-        history = list(_chat_history[-6:])
-        history.append({"role": "user", "content": user_msg})
+    if response_text is not None:
+        save("lilith", response_text)
+        _chat_history.append({"role": "user", "content": user_msg})
+        _chat_history.append({"role": "assistant", "content": response_text})
+        emit("response", {"text": response_text, "speak": False})
+        return
 
+    history = list(_chat_history[-6:])
+    history.append({"role": "user", "content": user_msg})
+    sid = request.sid
+
+    def run_generation():
         collected = []
-        emit("stream_start", {})
+        socketio.emit("stream_start", {}, to=sid)
 
         def send_token(token):
             collected.append(token)
-            emit("stream_token", {"token": token})
+            socketio.emit("stream_token", {"token": token}, to=sid)
 
         generate_stream(history, send_token)
-        response_text = "".join(collected)
-        emit("stream_end", {"speak": True})
-    else:
-        emit("response", {"text": response_text, "speak": False})
+        full = "".join(collected)
+        socketio.emit("stream_end", {"speak": True}, to=sid)
+        save("lilith", full)
+        _chat_history.append({"role": "user", "content": user_msg})
+        _chat_history.append({"role": "assistant", "content": full})
 
-    save("lilith", response_text)
-    _chat_history.append({"role": "user", "content": user_msg})
-    _chat_history.append({"role": "assistant", "content": response_text})
+    socketio.start_background_task(run_generation)
 
 
 def _handle_special_intents(msg: str) -> str | None:
