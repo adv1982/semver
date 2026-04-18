@@ -31,8 +31,10 @@ def _load():
         print(f"[Lilith] Carregando modelo: {MODEL_PATH}")
         _model = Llama(
             model_path=MODEL_PATH,
-            n_ctx=2048,
-            n_threads=os.cpu_count(),
+            n_ctx=512,
+            n_batch=8,
+            n_threads=max(1, (os.cpu_count() or 2) // 2),
+            n_gpu_layers=0,
             use_mlock=False,
             verbose=False,
         )
@@ -63,7 +65,7 @@ def generate(history: list[dict], max_new_tokens: int = 512) -> str:
         try:
             out = _model.create_chat_completion(
                 messages=messages,
-                max_tokens=max_new_tokens,
+                max_tokens=min(max_new_tokens, 256),
                 temperature=0.8,
                 stop=["<|eot_id|>", "<|end|>"],
             )
