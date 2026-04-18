@@ -1,45 +1,49 @@
 """
-Cliente do servidor Petals local (http://localhost:5001).
-Inicie o servidor separado com: bash install_petals.sh
+Cliente Ollama para inferência local.
+Inicie o Ollama antes: ollama serve
 """
 import requests as _requests
 from ai.persona import LILITH_SYSTEM_PROMPT
 
-PETALS_SERVER = "http://127.0.0.1:5001"
+OLLAMA_URL = "http://127.0.0.1:11434"
+MODEL = "hf.co/bartowski/Meta-Llama-3.1-8B-Instruct-abliterated-GGUF:Q4_K_M"
 _TIMEOUT = 120
 
 
 def init_model():
-    pass  # servidor Petals é iniciado separadamente
+    pass  # Ollama gerencia o modelo automaticamente
 
 
 def is_ready() -> bool:
     try:
-        r = _requests.get(f"{PETALS_SERVER}/status", timeout=3)
-        return r.json().get("ready", False)
+        r = _requests.get(f"{OLLAMA_URL}/api/tags", timeout=3)
+        models = [m["name"] for m in r.json().get("models", [])]
+        return any(MODEL.split(":")[0] in m for m in models)
     except Exception:
         return False
 
 
 def generate(history: list[dict], max_new_tokens: int = 512) -> str:
+    messages = [{"role": "system", "content": LILITH_SYSTEM_PROMPT}]
+    for msg in history:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+
     try:
         r = _requests.post(
-            f"{PETALS_SERVER}/generate",
-            json={"history": history, "max_new_tokens": max_new_tokens},
+            f"{OLLAMA_URL}/api/chat",
+            json={
+                "model": MODEL,
+                "messages": messages,
+                "stream": False,
+                "options": {"num_predict": max_new_tokens, "temperature": 0.8},
+            },
             timeout=_TIMEOUT,
         )
-        if r.status_code == 503:
-            return "⏳ Lilith ainda está acordando... o modelo está carregando na rede Petals. Aguarde um momento."
-        data = r.json()
-        if "error" in data:
-            return f"⚠️ Erro do modelo: {data['error']}"
-        return data.get("text", "")
+        r.raise_for_status()
+        return r.json()["message"]["content"].strip()
     except _requests.exceptions.ConnectionError:
         return (
-            "⚠️ Servidor Petals offline. Inicie em outro terminal:\n"
-            "```\nbash install_petals.sh\n```"
+            "⚠️ Ollama offline. Inicie com:\n```\nollama serve\n```"
         )
-    except _requests.exceptions.Timeout:
-        return "⏳ O modelo demorou muito para responder. Tente novamente."
     except Exception as e:
-        return f"⚠️ Erro inesperado: {e}"
+        return f"⚠️ Erro: {e}"
