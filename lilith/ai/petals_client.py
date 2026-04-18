@@ -1,73 +1,45 @@
-import threading
-import torch
-from config import PETALS_MODEL
+"""
+Cliente do servidor Petals local (http://localhost:5001).
+Inicie o servidor separado com: bash install_petals.sh
+"""
+import requests as _requests
 from ai.persona import LILITH_SYSTEM_PROMPT
 
-_model = None
-_tokenizer = None
-_lock = threading.Lock()
-_ready = False
-
-
-def _load():
-    global _model, _tokenizer, _ready
-    try:
-        from petals import AutoDistributedModelForCausalLM
-        from transformers import AutoTokenizer
-
-        print(f"[Lilith] Conectando ao Petals: {PETALS_MODEL}")
-        _tokenizer = AutoTokenizer.from_pretrained(PETALS_MODEL)
-        _model = AutoDistributedModelForCausalLM.from_pretrained(
-            PETALS_MODEL,
-            torch_dtype=torch.float16,
-        )
-        _ready = True
-        print("[Lilith] Modelo carregado via Petals ✓")
-    except Exception as e:
-        print(f"[Lilith] Petals indisponível ({e}), usando fallback HTTP.")
-        _ready = False
+PETALS_SERVER = "http://127.0.0.1:5001"
+_TIMEOUT = 120
 
 
 def init_model():
-    t = threading.Thread(target=_load, daemon=True)
-    t.start()
+    pass  # servidor Petals é iniciado separadamente
 
 
-def is_ready():
-    return _ready
+def is_ready() -> bool:
+    try:
+        r = _requests.get(f"{PETALS_SERVER}/status", timeout=3)
+        return r.json().get("ready", False)
+    except Exception:
+        return False
 
 
 def generate(history: list[dict], max_new_tokens: int = 512) -> str:
-    if not _ready or _model is None:
-        return _generate_fallback(history)
-
-    with _lock:
-        prompt = _build_prompt(history)
-        inputs = _tokenizer(prompt, return_tensors="pt")
-        with torch.inference_mode():
-            out = _model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                temperature=0.8,
-                do_sample=True,
-                pad_token_id=_tokenizer.eos_token_id,
-            )
-        decoded = _tokenizer.decode(out[0], skip_special_tokens=True)
-        return decoded[len(prompt):].strip()
-
-
-def _build_prompt(history: list[dict]) -> str:
-    parts = [f"<|system|>\n{LILITH_SYSTEM_PROMPT}\n"]
-    for msg in history:
-        role = "user" if msg["role"] == "user" else "assistant"
-        parts.append(f"<|{role}|>\n{msg['content']}\n")
-    parts.append("<|assistant|>\n")
-    return "".join(parts)
-
-
-def _generate_fallback(history: list[dict]) -> str:
-    """Fallback quando Petals não está disponível — retorna aviso claro."""
-    return (
-        "⚠️ Modelo Petals ainda está carregando ou indisponível. "
-        "Aguarde alguns instantes ou verifique sua conexão com a rede Petals."
-    )
+    try:
+        r = _requests.post(
+            f"{PETALS_SERVER}/generate",
+            json={"history": history, "max_new_tokens": max_new_tokens},
+            timeout=_TIMEOUT,
+        )
+        if r.status_code == 503:
+            return "⏳ Lilith ainda está acordando... o modelo está carregando na rede Petals. Aguarde um momento."
+        data = r.json()
+        if "error" in data:
+            return f"⚠️ Erro do modelo: {data['error']}"
+        return data.get("text", "")
+    except _requests.exceptions.ConnectionError:
+        return (
+            "⚠️ Servidor Petals offline. Inicie em outro terminal:\n"
+            "```\nbash install_petals.sh\n```"
+        )
+    except _requests.exceptions.Timeout:
+        return "⏳ O modelo demorou muito para responder. Tente novamente."
+    except Exception as e:
+        return f"⚠️ Erro inesperado: {e}"
