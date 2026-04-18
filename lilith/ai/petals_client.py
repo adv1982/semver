@@ -8,7 +8,7 @@ import os
 from ai.persona import LILITH_SYSTEM_PROMPT
 
 MODEL_PATH = os.path.expanduser(
-    "~/models/Llama-3.2-3B-Instruct-abliterated-Q4_K_M.gguf"
+    "~/models/Llama-3.2-3B-Instruct-uncensored-Q4_K_M.gguf"
 )
 _model = None
 _lock = threading.Lock()
