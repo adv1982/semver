@@ -31,22 +31,14 @@ def _init_modules():
 
 @app.route("/", methods=["GET"])
 def index():
-    if not session.get("authenticated"):
-        return redirect(url_for("login"))
+    session["authenticated"] = True
+    _init_modules()
     return render_template("index.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    error = None
-    if request.method == "POST":
-        pwd = request.form.get("password", "")
-        if pwd == LILITH_PASSWORD:
-            session["authenticated"] = True
-            _init_modules()
-            return redirect(url_for("index"))
-        error = "Senha incorreta."
-    return render_template("login.html", error=error)
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
