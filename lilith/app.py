@@ -101,12 +101,11 @@ def handle_message(data):
         return
 
     from memory.store import save
-    from ai.petals_client import generate_stream
+    from ai.petals_client import generate
 
     save("user", user_msg)
 
     response_text = _handle_special_intents(user_msg)
-
     if response_text is not None:
         save("lilith", response_text)
         _chat_history.append({"role": "user", "content": user_msg})
@@ -118,23 +117,14 @@ def handle_message(data):
     history.append({"role": "user", "content": user_msg})
     sid = request.sid
 
-    def run_generation():
-        collected = []
-        socketio.emit("stream_start", {}, to=sid)
-
-        def send_token(token):
-            collected.append(token)
-            socketio.emit("stream_token", {"token": token}, to=sid)
-            socketio.sleep(0)  # cede controle ao eventlet para enviar o token
-
-        generate_stream(history, send_token)
-        full = "".join(collected)
-        socketio.emit("stream_end", {"speak": True}, to=sid)
-        save("lilith", full)
+    def run():
+        result = generate(history)
+        socketio.emit("response", {"text": result, "speak": True}, to=sid)
+        save("lilith", result)
         _chat_history.append({"role": "user", "content": user_msg})
-        _chat_history.append({"role": "assistant", "content": full})
+        _chat_history.append({"role": "assistant", "content": result})
 
-    socketio.start_background_task(run_generation)
+    socketio.start_background_task(run)
 
 
 def _handle_special_intents(msg: str) -> str | None:
